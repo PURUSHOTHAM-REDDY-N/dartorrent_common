@@ -12,9 +12,9 @@ void main() {
   var c1 = CompactAddress.parseIPv4Address(c.toBytes());
   print(c1);
 
-  var c2 = c1.clone();
+  var c2 = c1?.clone();
   print(c2 == c);
-  var bytes = CompactAddress.multipleAddressBytes([c, c1, c2]);
+  var bytes = CompactAddress.multipleAddressBytes([c, c1!, c2!]);
   print(bytes);
   var l = CompactAddress.parseIPv4Addresses(bytes);
   print(l);

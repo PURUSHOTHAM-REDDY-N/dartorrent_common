@@ -9,10 +9,10 @@ import 'dart:typed_data';
 class CompactAddress {
   final InternetAddress address;
   final int port;
-  String _contactEncodingStr;
+  String? _contactEncodingStr;
 
   CompactAddress(this.address, this.port) {
-    assert(address != null && port != null, 'address or port can not be null');
+    //assert(address != null && port != null, 'address or port can not be null');
     assert(port >= 0 && port <= 65535, 'wrong port');
   }
 
@@ -49,7 +49,7 @@ class CompactAddress {
     return address.address;
   }
 
-  String toContactEncodingString() {
+  String? toContactEncodingString() {
     _contactEncodingStr ??= String.fromCharCodes(toBytes());
     return _contactEncodingStr;
   }
@@ -76,7 +76,7 @@ class CompactAddress {
   /// or will exception will happen.
   static List<int> multipleAddressBytes(List<CompactAddress> addresses,
       [bool growable = true]) {
-    if (addresses == null || addresses.isEmpty) return <int>[];
+    if (addresses.isEmpty) return <int>[];
     var l;
     if (growable) {
       l = <int>[];
@@ -101,8 +101,8 @@ class CompactAddress {
 
   /// Parse compact bytes to ipv4 address
   static List<CompactAddress> parseIPv4Addresses(List<int> message,
-      [int offset = 0, int end]) {
-    if (message == null) return <CompactAddress>[];
+      [int offset = 0, int? end]) {
+    if (message.isEmpty) return <CompactAddress>[];
     end ??= message.length;
     var l = <CompactAddress>[];
     for (var i = offset; i < end; i += 6) {
@@ -119,8 +119,8 @@ class CompactAddress {
   }
 
   /// Parse compact bytes to ipv4 address list
-  static CompactAddress parseIPv4Address(List<int> message, [int offset = 0]) {
-    if (message == null) return null;
+  static CompactAddress? parseIPv4Address(List<int> message, [int offset = 0]) {
+    if (message.isEmpty) return null;
     if (message.length - offset < 6) {
       return null;
     }
@@ -138,8 +138,8 @@ class CompactAddress {
   }
 
   /// Parse compact bytes to ipv6 address
-  static CompactAddress parseIPv6Address(List<int> message, [int offset = 0]) {
-    if (message == null) return null;
+  static CompactAddress? parseIPv6Address(List<int> message, [int offset = 0]) {
+    if (message.isEmpty) return null;
     if (message.length - offset < 18) {
       return null;
     }
@@ -158,8 +158,8 @@ class CompactAddress {
 
   /// Parse compact bytes to ipv6 address list
   static List<CompactAddress> parseIPv6Addresses(List<int> message,
-      [int offset = 0, int end]) {
-    if (message == null) return <CompactAddress>[];
+      [int offset = 0, int? end]) {
+    if (message.isEmpty) return <CompactAddress>[];
     end ??= message.length;
     var l = <CompactAddress>[];
     for (var i = offset; i < end; i += 18) {
@@ -216,7 +216,7 @@ String transformBufferToHexString(List<int> buffer) {
   return str;
 }
 
-Future<List<Uri>> _getTrackerFrom(String trackerUrlStr,
+Future<List<Uri>?> _getTrackerFrom(String trackerUrlStr,
     [int retryTime = 0]) async {
   if (retryTime >= 3) return null;
   var client;
@@ -232,7 +232,7 @@ Future<List<Uri>> _getTrackerFrom(String trackerUrlStr,
     await stream.forEach((element) {
       var ss = element.split('\n');
       ss.forEach((url) {
-        if (url != null && url.isNotEmpty) {
+        if (url.isNotEmpty) {
           try {
             var r = Uri.parse(url);
             alist.add(r);
@@ -250,18 +250,18 @@ Future<List<Uri>> _getTrackerFrom(String trackerUrlStr,
     return re;
   } catch (e) {
     client?.close();
-    await Future.delayed(Duration(seconds: 15 * math.pow(2, retryTime)));
+    await Future.delayed(Duration(seconds: 15 * math.pow(2, retryTime).toInt()));
     return _getTrackerFrom(trackerUrlStr, ++retryTime);
   }
 }
 
 /// Get trackers url list from some awsome website
 Stream<List<Uri>> findPublicTrackers() {
-  var f = <Future<List<Uri>>>[];
+  var f = <Future<List<Uri>?>>[];
   f.add(_getTrackerFrom('https://newtrackon.com/api/stable'));
   f.add(_getTrackerFrom('https://trackerslist.com/all.txt'));
   f.add(_getTrackerFrom(
       'https://cdn.jsdelivr.net/gh/ngosang/trackerslist/trackers_all.txt'));
   f.add(_getTrackerFrom('https://at.raxianch.moe/?type=AT-all'));
-  return Stream.fromFutures(f);
+  return Stream.fromFutures(f as Iterable<Future<List<Uri>>>);
 }

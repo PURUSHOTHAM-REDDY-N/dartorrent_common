@@ -6,7 +6,7 @@ void main() {
     test('IPv4 create/clone', () {
       var bytes = randomBytes(8);
       var c = CompactAddress.parseIPv4Address(bytes, 2);
-      var a = c.address;
+      var a = c!.address;
       for (var i = 0; i < a.rawAddress.length; i++) {
         assert(bytes[i + 2] == a.rawAddress[i]);
       }

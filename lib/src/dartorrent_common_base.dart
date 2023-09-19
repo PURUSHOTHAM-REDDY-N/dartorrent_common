@@ -256,12 +256,13 @@ Future<List<Uri>?> _getTrackerFrom(String trackerUrlStr,
 }
 
 /// Get trackers url list from some awsome website
-Stream<List<Uri>> findPublicTrackers() {
+Stream<List<Uri>?> findPublicTrackers() {
   var f = <Future<List<Uri>?>>[];
   f.add(_getTrackerFrom('https://newtrackon.com/api/stable'));
   f.add(_getTrackerFrom('https://trackerslist.com/all.txt'));
   f.add(_getTrackerFrom(
       'https://cdn.jsdelivr.net/gh/ngosang/trackerslist/trackers_all.txt'));
   f.add(_getTrackerFrom('https://at.raxianch.moe/?type=AT-all'));
-  return Stream.fromFutures(f as Iterable<Future<List<Uri>>> );
+  return Stream.fromFutures(f);
 }
+

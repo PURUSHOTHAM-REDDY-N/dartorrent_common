@@ -263,5 +263,5 @@ Stream<List<Uri>> findPublicTrackers() {
   f.add(_getTrackerFrom(
       'https://cdn.jsdelivr.net/gh/ngosang/trackerslist/trackers_all.txt'));
   f.add(_getTrackerFrom('https://at.raxianch.moe/?type=AT-all'));
-  return Stream.fromFutures(f as Iterable<Future<List<Uri>>>);
+  return Stream.fromFutures(f);
 }
